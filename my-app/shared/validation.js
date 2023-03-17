@@ -1,8 +1,8 @@
 export function emailValidation(state) {
-    const rjx = /[0-9][aA-zZ][@]/;
+    const rjx = /[aA-zZ][@]/;
     const isValidEmail = rjx.test(state.email);
     if (!isValidEmail) {
-      alert("Email must contain at least 1 numeric, 1 alphabatic and simbol @");
+      alert("Email must contain at least 1 numbers, 1 alphabatic and simbol @");
       return false;
     } else return true;
   }
@@ -23,7 +23,7 @@ export function emailValidation(state) {
     const isValidPassword = rjx.test(state.password);
     if (!isValidPassword) {
       alert(
-        "Password may contain only numeric. Password length must consist minimum 6 caracters! "
+        "Password may contain only numbers. Password length must consist minimum 6 caracters! "
       );
       return false;
     } else {
