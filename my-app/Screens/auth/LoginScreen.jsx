@@ -86,7 +86,7 @@ const LoginScreen = ({ navigation }) => {
                       setIsFocus({ ...isFocus, email: false });
                     }}
                     placeholderTextColor="#BDBDBD"
-                    placeholder="e-mail"
+                    placeholder="email"
                     value={state.email}
                     onChangeText={(value) =>
                       setState((prevState) => ({ ...prevState, email: value }))
@@ -137,6 +137,7 @@ const LoginScreen = ({ navigation }) => {
                 activeOpacity={0.65}
                 onPress={submitForm}
                 style={styles.button}
+                debugger
               >
                 <Text style={styles.textButton}>Log in</Text>
               </TouchableOpacity>}
@@ -146,7 +147,7 @@ const LoginScreen = ({ navigation }) => {
                 style={styles.textLink}
                 onPress={() => navigation.navigate("Registration")}
               >
-                Haven't you had an account? Fill a registartion form
+                Don't have an account? Register
               </Text>
             </TouchableOpacity>}
           </View>

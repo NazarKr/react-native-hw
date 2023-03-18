@@ -1,3 +1,4 @@
+import styled from "styled-components/native";
 import React, { useState, useCallback } from "react";
 import {
   StyleSheet,
@@ -8,7 +9,6 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
-  ImageBackground,
   Image,
 } from "react-native";
 import { useFonts } from "expo-font";
@@ -71,23 +71,21 @@ const RegistrationScreens = ({ navigation }) => {
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
-      <View style={styles.container} onLayout={onLayoutRootView}>
-        <ImageBackground
-          style={styles.image}
+      <ViewConteiner onLayout={onLayoutRootView}>
+        <ImageBackgroundStyled
           source={require("../../assets/images/photo-bg2x.jpg")}
         >
-          <View style={styles.imageWrapper}>
+          <ViewimageWrapper>
             <Image source={require("../../assets/images/frame.png")} />
-            <Image
-              style={styles.addIcon}
+            <ImageAddIcon
               source={require("../../assets/add.png")}
             />
-          </View>
+          </ViewimageWrapper>
 
-          <View style={styles.wrapperForm}>
+          <ViewWrapperForm>
             <View style={styles.form}>
               <View>
-                <Text style={styles.title}>Registration</Text>
+                <TextTitle>Registration</TextTitle>
               </View>
               <KeyboardAvoidingView
                 behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -129,7 +127,7 @@ const RegistrationScreens = ({ navigation }) => {
                       () => emailValidator();
                       setIsFocus({ ...isFocus, email: false });
                     }}
-                    placeholder="e-mail"
+                    placeholder="email"
                     value={state.email}
                     onChangeText={(value) =>
                       setState((prevState) => ({ ...prevState, email: value }))
@@ -164,66 +162,131 @@ const RegistrationScreens = ({ navigation }) => {
                         borderColor: isFocus.password ? `#FF6C00` : `#E8E8E8`,
                       }}
                     />
-                    <TouchableOpacity
+                    <TouchableOpacityPassword
                       activeOpacity={0.65}
-                      style={styles.textPassword}
                       onPress={() => {
                         setIsSecureEntry((prevState) => !prevState);
                       }}
                     >
                       <Text>{isSecureEntry ? "Show" : "Hide"}</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacityPassword>
                   </View>
                 </View>
               </KeyboardAvoidingView>
               {!isShowKeyboard && (
-                <TouchableOpacity
+                <TouchableOpacityButton
                   activeOpacity={0.65}
                   onPress={submitForm}
-                  style={styles.button}
                 >
-                  <Text style={styles.textButton}>Sign in</Text>
-                </TouchableOpacity>
+                  <TextButton>Sign in</TextButton>
+                </TouchableOpacityButton>
               )}
             </View>
             {!isShowKeyboard && (
               <TouchableOpacity>
-                <Text
-                  style={styles.textLink}
+                <TextLink
                   onPress={() => navigation.navigate("Login")}
                 >
-                  Have you already had an account? Log in
-                </Text>
+                  Do you have an account? Log In
+                </TextLink>
               </TouchableOpacity>
             )}
-          </View>
-        </ImageBackground>
-      </View>
+          </ViewWrapperForm>
+        </ImageBackgroundStyled>
+      </ViewConteiner>
     </TouchableWithoutFeedback>
   );
 };
 export default RegistrationScreens;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  image: {
-    position: "relative",
-    flex: 1,
-    resizeMode: "cover",
-    justifyContent: "flex-end",
-  },
+const ViewConteiner = styled.View`
+  flex: 1;
+`;
 
-  title: {
-    textAlign: "center",
-    fontFamily: "Roboto-Medium",
-    fontSize: 30,
-    lineHeight: 35,
-    letterSpacing: 0.01,
-    color: "#212121",
-    marginBottom: 27,
-  },
+const ImageBackgroundStyled = styled.ImageBackground`
+    position: relative;
+    flex: 1;
+    background-size: cover;
+    justify-content: flex-end;
+`;
+
+const TextTitle = styled.Text`
+    text-align: center;
+    font-family: Roboto-Medium;
+    font-size: 32px;
+    line-height: 35px;
+    /* letter-spacing: 0.01; */
+    color: #212121;
+    margin-bottom: 27px;
+`;
+
+const ViewimageWrapper = styled.View`
+    left: 35%;
+    top: 10%;
+    z-index: 100;
+    width: 120px;
+    height: 120px;
+    background-color: #F6F6F6;
+    border-radius: 50px;
+`;
+
+const ImageAddIcon = styled.Image`
+    position: absolute;
+    left: 70%;
+    top: 70%;
+    width: 25px;
+    height: 25px;
+`;
+
+const ViewWrapperForm = styled.View`
+  padding-bottom: 45px;
+  padding-top: 92px;
+  background-color: #FFFFFF;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+`;
+
+const TextLink = styled.Text`
+  font-family: Roboto-Regular;
+  font-size: 16px;
+  line-height: 19px;
+  text-align: center;
+  color: #1B4371;
+`;
+
+const TextButton = styled.Text`
+    color: #FFFFFF;
+    font-family: Roboto-Regular;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 19px;
+`;
+
+const TouchableOpacityButton = styled.TouchableOpacity`
+    background-color: #FF6C00;
+    border-radius: 100px;
+    height: 50px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    justify-content: center;
+    align-items: center;
+`;
+
+const TouchableOpacityPassword = styled.TouchableOpacity`
+position: absolute;
+    top: 50%;
+    left: 80%;
+    color: #1B4371;
+    font-size: 14px;
+    line-height: 19px;
+`;
+
+const ViewForm = styled.View`
+
+`;
+ 
+
+const styles = StyleSheet.create({
   input: {
     fontFamily: "Roboto-Regular",
     fontSize: 16,
@@ -237,60 +300,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     color: "#212121",
   },
-  wrapperForm: {
-    paddingBottom: 45,
-    paddingTop: 92,
-    backgroundColor: "#FFFFFF",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-  },
   form: {
     marginHorizontal: 16,
-  },
-  button: {
-    backgroundColor: "#FF6C00",
-    borderRadius: 100,
-    height: 51,
-    marginTop: 43,
-    marginBottom: 16,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  textButton: {
-    color: "#FFFFFF",
-    fontFamily: "Roboto-Regular",
-    fontSize: 16,
-    lineHeight: 19,
-  },
-  textLink: {
-    fontFamily: "Roboto-Regular",
-    fontSize: 16,
-    lineHeight: 19,
-    textAlign: "center",
-    color: "#1B4371",
-  },
-  imageWrapper: {
-    left: "35%",
-    top: "10%",
-    zIndex: 100,
-    width: 120,
-    height: 120,
-    backgroundColor: "#F6F6F6",
-    borderRadius: 16,
-  },
-  addIcon: {
-    position: "absolute",
-    left: "90%",
-    top: "65%",
-    width: 25,
-    height: 25,
-  },
-  textPassword: {
-    position: "absolute",
-    top: "50%",
-    left: "80%",
-    color: "#1B4371",
-    fontSize: 16,
-    lineHeight: 19,
   },
 });
