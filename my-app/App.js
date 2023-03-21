@@ -1,31 +1,40 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { View } from "react-native";
+
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 
-import RegistrationScreens from "./Screens/auth/RegistrationScreen";
-import LoginScreen from "./Screens/auth/LoginScreen";
+import AuthContext from "./shared/AuthContext";
 
-const AuthStack = createStackNavigator();
+import { Routing } from "./shared/components/routing";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
+    "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
+  });
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
   return (
-    <>
-      <NavigationContainer>
-        <AuthStack.Navigator>
-          <AuthStack.Screen
-            options={{ headerShown: false }}
-            name="Login"
-            component={LoginScreen}
-          />
-          <AuthStack.Screen
-            options={{ headerShown: false }}
-            name="Registration"
-            component={RegistrationScreens}
-          />
-        </AuthStack.Navigator>
-      </NavigationContainer>
-      <StatusBar style="auto" />
-    </>
+    <AuthContext>
+      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        <NavigationContainer>
+          <Routing />
+        </NavigationContainer>
+        <StatusBar style="auto" />
+      </View>
+    </AuthContext>
   );
 }
