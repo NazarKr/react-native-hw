@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,10 +9,10 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  ImageBackground,
   Image,
 } from "react-native";
-import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
+
 
 import {
   loginValidation,
@@ -20,7 +20,7 @@ import {
   passwordValidation,
 } from "../../shared/validation";
 
-SplashScreen.preventAutoHideAsync();
+
 
 const initialState = {
   login: "",
@@ -36,21 +36,9 @@ const RegistrationScreens = ({ navigation }) => {
     email: false,
     password: false,
   });
-  const [fontsLoaded] = useFonts({
-    "Roboto-Regular": require("../../assets/fonts/Roboto-Regular.ttf"),
-    "Roboto-Medium": require("../../assets/fonts/Roboto-Medium.ttf"),
-  });
+
   const [isSecureEntry, setIsSecureEntry] = useState(true);
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   function keyboardHide() {
     setIsShowKeyboard(false);
@@ -68,10 +56,9 @@ const RegistrationScreens = ({ navigation }) => {
     } else return;
   }
 
-
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
-      <ViewConteiner onLayout={onLayoutRootView}>
+      <ViewConteiner>
         <ImageBackgroundStyled
           source={require("../../assets/images/photo-bg2x.jpg")}
         >
@@ -280,11 +267,6 @@ position: absolute;
     font-size: 14px;
     line-height: 19px;
 `;
-
-const ViewForm = styled.View`
-
-`;
- 
 
 const styles = StyleSheet.create({
   input: {
