@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import MapView, { Marker } from "react-native-maps";
 
@@ -17,19 +17,25 @@ import {
   Platform,
 } from "react-native";
 
-const MapScreen = () => {
-  const [region, setRegion] = useState(null);
-  const getInitialState = () => {
-    return {
-      region: {
-        latitude: 48.488388,
-        longitude: 35.001967,
-        latitudeDelta: 0.001,
-        longitudeDelta: 0.001,
-      },
-    };
-  };
+const MapScreen = ({ route }) => {
+  const { location, item } = route.params;
+  console.log("location in maps", location);
+  console.log("item", item);
+  const [region, setRegion] = useState({
+    latitude: 47.788,
+    longitude: 30.6661,
+    latitudeDelta: 0.001,
+    longitudeDelta: 0.006,
+  });
+
+  useEffect(() => {
+    if (location) {
+      setRegion(location);
+    }
+  }, [location]);
+
   const onChangeRegion = () => {
+    if (!region) return
     setRegion(region);
   };
   return (
@@ -37,17 +43,25 @@ const MapScreen = () => {
       <MapView
         style={{ flex: 1 }}
         initialRegion={{
-          latitude: 48.488388,
-          longitude: 35.001967,
+          latitude: 47.788,
+          longitude: 30.6661,
           latitudeDelta: 0.001,
           longitudeDelta: 0.006,
         }}
-        region={region}
+        region={{
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: 0.001,
+          longitudeDelta: 0.006,
+        }}
         onRegionChange={onChangeRegion}
       >
         <Marker
-          coordinate={{ latitude: 48.488388, longitude: 35.001967 }}
-          title="travel photo"
+          coordinate={{
+            latitude: location.latitude,
+            longitude: location.longitude,
+          }}
+          title={item.formValues.title}
         />
       </MapView>
     </View>

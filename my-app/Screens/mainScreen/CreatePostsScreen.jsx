@@ -10,13 +10,14 @@ import {
 import * as Location from "expo-location";
 import { useEffect, useState, useRef } from "react";
 import { Camera, CameraType } from "expo-camera";
+// import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import { View, Button } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 
 import { Feather } from "@expo/vector-icons";
 
 const CreatePostScreen = ({ navigation }) => {
-  const [location, setLocation] = useState(null);
+  // const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [startCamera, setStartCamera] = useState(null);
   const [photo, setPhoto] = useState("");
@@ -30,22 +31,21 @@ const CreatePostScreen = ({ navigation }) => {
     location: false,
   });
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-      const location = await Location.getCurrentPositionAsync({});
-      const coords = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      };
-      setLocation(coords);
-      console.log(coords);
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     const { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== "granted") {
+  //       setErrorMsg("Permission to access location was denied");
+  //       return;
+  //     }
+  //     // const _location = await Location.getCurrentPositionAsync({});
+  //     // const coords = {
+  //     //   latitude: _location.coords.latitude,
+  //     //   longitude: _location.coords.longitude,
+  //     // };
+  //     // setLocation(coords);
+  //   })();
+  // }, []);
 
   useEffect(() => {
     if (formValues.title && formValues.location) {
@@ -55,20 +55,40 @@ const CreatePostScreen = ({ navigation }) => {
     }
   }, [formValues]);
 
-  let text = "Waiting..";
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
+  // let text = "Waiting..";
+  // if (errorMsg) {
+  //   text = errorMsg;
+  // } else if (location) {
+  //   text = JSON.stringify(location);
+  // }
   const makePhoto = async () => {
     const photo = await cameraRef.current.takePictureAsync();
     setPhoto(photo.uri);
+    // const location = await Location.getCurrentPositionAsync({});
+    // const coords = {
+    //   latitude: location.coords.latitude,
+    //   longitude: location.coords.longitude,
+    // };
+    // setLocation(coords);
   };
+
+  // const deletePhoto = () => {
+  //   CameraRoll.deletePhotos([photo.uri]);
+  // }
+
+  const cleanPhoto = () => {
+    setPhoto('');
+    setFormValues({ title: "", location: "" });
+  }
 
   const sendPhotoInfo = () => {
     navigation.navigate("Posts", { photo, formValues });
   };
+
+  // const sendLocationInfo = () => {
+  //   console.log("location in createPost", location);
+  //   navigation.navigate("Map", { location });
+  // };
 
   const __startCamera = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
@@ -80,7 +100,7 @@ const CreatePostScreen = ({ navigation }) => {
     }
   };
   return (
-    <>
+    <View style={styles.container}>
       {/* <Text>{text}</Text> */}
       {startCamera ? (
         <>
@@ -90,7 +110,7 @@ const CreatePostScreen = ({ navigation }) => {
                 <View style={styles.takePhotoContainer}>
                   <Image
                     source={{ uri: photo }}
-                    style={{ height: 150, width: 150, borderRadius: 10 }}
+                    style={{ flex: 1 }}
                   />
                 </View>
               )}
@@ -105,7 +125,7 @@ const CreatePostScreen = ({ navigation }) => {
             {!photo ? (
               <Text style={styles.text}>Download photo</Text>
             ) : (
-              <Text style={styles.text}>Edit photo</Text>
+              <Text onPress={cleanPhoto} style={styles.text}>Edit photo</Text>
             )}
             {photo && (
               <View style={styles.photoInfoWrapper}>
@@ -154,26 +174,31 @@ const CreatePostScreen = ({ navigation }) => {
               </View>
             )}
             {photo && (
-              <TouchableOpacity
-                style={[
-                  styles.publishButton,
-                  !isFormValid && styles.disabledPublishButton,
-                ]}
-              >
-                <Text
-                  style={{
-                    ...styles.publishButtonText,
-                    color: isFormValid ? "#FFFFFF" : "#BDBDBD",
-                  }}
+              <>
+                <TouchableOpacity
+                  style={[
+                    styles.publishButton,
+                    !isFormValid && styles.disabledPublishButton,
+                  ]}
                   onPress={() => {
                     if (isFormValid) {
                       sendPhotoInfo();
                     }
                   }}
                 >
-                  Publish
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={{
+                      ...styles.publishButtonText,
+                      color: isFormValid ? "#FFFFFF" : "#BDBDBD",
+                    }}
+                  >
+                    Publish
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.cleanBtnWrapper} onPress={cleanPhoto}>
+                  <Feather name="trash-2" size={24} color="#DADADA" />
+                </TouchableOpacity>
+              </>
             )}
           </KeyboardAvoidingView>
         </>
@@ -210,12 +235,16 @@ const CreatePostScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       )}
-    </>
+    </View>
   );
 };
 export default CreatePostScreen;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ffff'
+  },
   camera: {
     height: 240,
     marginHorizontal: 16,
@@ -232,7 +261,9 @@ const styles = StyleSheet.create({
     left: 10,
     borderColor: "#fff",
     borderWidth: 1,
-    borderRadius: 10,
+    // borderRadius: 10,
+    width: 100,
+    height: 100
   },
   snapWrapper: {
     alignItems: "center",
@@ -249,9 +280,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginHorizontal: 16,
     height: 51,
-    marginTop: 32,
+    marginTop: 30,
     backgroundColor: "#FF6C00",
     borderRadius: 100,
+    marginBottom: 30
   },
 
   disabledPublishButton: {
@@ -272,7 +304,7 @@ const styles = StyleSheet.create({
     color: "#BDBDBD",
   },
   photoInfoWrapper: {
-    marginHorizontal:16
+    marginHorizontal: 16,
   },
 
   inputMapWrapper: {
@@ -301,4 +333,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#E8E8E8",
   },
+
+  cleanBtnWrapper: {
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    width: 70,
+    height: 40,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F6F6F6',
+    borderRadius: 20,
+  }
 });
