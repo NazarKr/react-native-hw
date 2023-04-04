@@ -12,11 +12,17 @@ import {
   Platform,
 } from "react-native";
 
+import { useDispatch } from "react-redux";
+
+import { authLogOutUser } from "../../../redux/auth/authOperations";
+
 import { Feather, FontAwesome } from "@expo/vector-icons";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import useAuth from "../../../shared/hooks/useAuth";
+// import useAuth from "../../../shared/hooks/useAuth";
+
+
 
 import PostScreen from "../PostsScreen";
 
@@ -27,8 +33,11 @@ import ProfileScreen from "../ProfileScreen";
 const MainTab = createBottomTabNavigator();
 
 const DefaultScreen = ({ navigation }) => {
-  const { setIsAuth } = useAuth();
-
+  // const { setIsAuth } = useAuth();
+  const dispatch = useDispatch();
+  const logOut = () => {
+    dispatch(authLogOutUser())
+  }
   return (
     <View style={styles.screenWrapper}>
       <MainTab.Navigator
@@ -59,32 +68,30 @@ const DefaultScreen = ({ navigation }) => {
                   name="log-out"
                   size={24}
                   color="#BDBDBD"
-                  onPress={() => {
-                    setIsAuth(false);
-                  }}
+                  onPress={logOut}
                 />
               </View>
             ),
-            headerLeft: () => (
-              <View style={styles.iconWrapper}>
-                <Feather
-                  name="map"
-                  size={24}
-                  color="#BDBDBD"
-                  onPress={() => {
-                    navigation.navigate("Map");
-                  }}
-                />
-                <FontAwesome
-                  name="comments"
-                  size={24}
-                  color="#BDBDBD"
-                  onPress={() => {
-                    navigation.navigate("Comments");
-                  }}
-                />
-              </View>
-            ),
+            // headerLeft: () => (
+            //   <View style={styles.iconWrapper}>
+            //     <Feather
+            //       name="map"
+            //       size={24}
+            //       color="#BDBDBD"
+            //       onPress={() => {
+            //         navigation.navigate("Map");
+            //       }}
+            //     />
+            //     <FontAwesome
+            //       name="comments"
+            //       size={24}
+            //       color="#BDBDBD"
+            //       onPress={() => {
+            //         navigation.navigate("Comments");
+            //       }}
+            //     />
+            //   </View>
+            // ),
             tabBarItemStyle: { height: 40, borderRadius: 20 },
           }}
           name="Posts"
@@ -138,6 +145,6 @@ const styles = StyleSheet.create({
   },
 
   logoutWrapper: {
-    right:10
+    right: 10
   }
 });

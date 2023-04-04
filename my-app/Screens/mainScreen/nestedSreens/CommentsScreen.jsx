@@ -68,8 +68,8 @@ const CommentScreen = ({ route }) => {
 
   const keyboardHide = () => {
     Keyboard.dismiss();
-    setIsShowKeyboard(false)
-  }
+    setIsShowKeyboard(false);
+  };
 
   useEffect(() => {
     AsyncStorage.setItem("@items", JSON.stringify(commentsArr));
@@ -77,12 +77,14 @@ const CommentScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      {!isShowKeyboard && <View style={styles.photoWrapper}>
-        <Image
-          source={{ uri: photo }}
-          style={{ width: "100%", height: "100%", borderRadius: 8 }}
-        />
-      </View>}
+      {!isShowKeyboard && (
+        <View style={styles.photoWrapper}>
+          <Image
+            source={{ uri: photo }}
+            style={{ width: "100%", height: "100%", borderRadius: 8 }}
+          />
+        </View>
+      )}
       <FlatList
         data={commentsArr}
         keyExtractor={(item, indx) => indx.toString()}

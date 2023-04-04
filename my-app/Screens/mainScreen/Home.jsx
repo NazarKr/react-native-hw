@@ -27,17 +27,17 @@ const HomeScreen = () => {
     <>
       <AuthStack.Navigator initialRouteName="default" >
         <AuthStack.Screen
-          options={{ headerShown: false, headerTitleAlign:'center' }}
+          options={{ headerShown: false, headerTitleAlign: 'center' }}
           name="default"
           component={DefaultScreen}
         />
         <AuthStack.Screen
-          options={{ headerShown: true, headerTitleAlign:'center' }}
+          options={{ headerShown: true, headerTitleAlign: 'center' }}
           name="Map"
           component={MapScreen}
         />
         <AuthStack.Screen
-          options={{ headerShown: true, headerTitleAlign:'center' }}
+          options={{ headerShown: true, headerTitleAlign: 'center' }}
           name="Comments"
           component={CommentScreen}
         />

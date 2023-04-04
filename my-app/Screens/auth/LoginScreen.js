@@ -14,7 +14,11 @@ import {
 
 import { loginValidation, passwordValidation } from "../../shared/validation";
 
-import useAuth from "../../shared/hooks/useAuth";
+// import useAuth from "../../shared/hooks/useAuth";
+
+import { useDispatch } from "react-redux";
+
+import { authLoginUser } from "../../redux/auth/authOperations";
 
 const initialState = {
   email: "",
@@ -22,7 +26,7 @@ const initialState = {
 };
 
 const LoginScreen = ({ navigation }) => {
-  const { isAuth, setIsAuth } = useAuth();
+  // const { isAuth, setIsAuth } = useAuth();
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
   const [isFocus, setIsFocus] = useState({
@@ -31,6 +35,7 @@ const LoginScreen = ({ navigation }) => {
   });
 
   const [isSecureEntry, setIsSecureEntry] = useState(true);
+  const dispatch = useDispatch();
 
   function keyboardHide() {
     setIsShowKeyboard(false);
@@ -39,10 +44,9 @@ const LoginScreen = ({ navigation }) => {
 
   function submitForm() {
     if (loginValidation(state) && passwordValidation(state)) {
-      console.log(state);
+      dispatch(authLoginUser(state))
       setState(initialState);
-      setIsAuth(true);
-      console.log("isAuth after submit", isAuth);
+      // setIsAuth(true);
     } else return;
   }
 
@@ -139,7 +143,7 @@ const LoginScreen = ({ navigation }) => {
                     navigation.navigate("Registration");
                   }}
                 >
-                  Don't have an account? Register
+                  Haven't you had an account? Fill a registartion form
                 </Text>
               </TouchableOpacity>
             )}

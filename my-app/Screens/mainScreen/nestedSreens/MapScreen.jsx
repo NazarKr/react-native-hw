@@ -18,50 +18,36 @@ import {
 } from "react-native";
 
 const MapScreen = ({ route }) => {
-  const { location, item } = route.params;
+  const { location, title } = route.params;
+  console.log('route.params', route.params);
   console.log("location in maps", location);
-  console.log("item", item);
-  const [region, setRegion] = useState({
-    latitude: 47.788,
-    longitude: 30.6661,
+
+  const [isInitialRegionSet, setIsInitialRegionSet] = useState(false);
+
+  const initialRegion = {
+    latitude: location.latitude,
+    longitude: location.longitude,
     latitudeDelta: 0.001,
     longitudeDelta: 0.006,
-  });
+  };
 
-  useEffect(() => {
-    if (location) {
-      setRegion(location);
-    }
-  }, [location]);
-
-  const onChangeRegion = () => {
-    if (!region) return
-    setRegion(region);
+  const onChangeRegionComplete = () => {
+    if (!isInitialRegionSet)
+      setIsInitialRegionSet(true);
   };
   return (
     <View style={styles.container}>
       <MapView
         style={{ flex: 1 }}
-        initialRegion={{
-          latitude: 47.788,
-          longitude: 30.6661,
-          latitudeDelta: 0.001,
-          longitudeDelta: 0.006,
-        }}
-        region={{
-          latitude: location.latitude,
-          longitude: location.longitude,
-          latitudeDelta: 0.001,
-          longitudeDelta: 0.006,
-        }}
-        onRegionChange={onChangeRegion}
+        initialRegion={initialRegion}
+        onRegionChange={onChangeRegionComplete}
       >
         <Marker
           coordinate={{
             latitude: location.latitude,
             longitude: location.longitude,
           }}
-          title={item.formValues.title}
+          title={title}
         />
       </MapView>
     </View>

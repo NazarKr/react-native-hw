@@ -1,6 +1,4 @@
-
 import { createStackNavigator } from "@react-navigation/stack";
-
 
 import RegistrationScreens from "../../Screens/auth/RegistrationScreen";
 import LoginScreen from "../../Screens/auth/LoginScreen";
@@ -9,12 +7,7 @@ import HomeTabsScreen from "../../Screens/mainScreen/Home";
 
 const AuthStack = createStackNavigator();
 
-
-import useAuth from "../hooks/useAuth";
-
-export const Routing = () => {
-  const { isAuth } = useAuth();
-
+export const useRoute = (isAuth) => {
   if (!isAuth) {
     return (
       <>
@@ -33,7 +26,5 @@ export const Routing = () => {
       </>
     );
   }
-  return (
-    <HomeTabsScreen/>
-  );
+  return <HomeTabsScreen />;
 };

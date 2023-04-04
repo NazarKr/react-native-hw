@@ -1,7 +1,10 @@
 import React from "react";
 import { useState, useEffect } from "react";
 
-import * as Location from "expo-location";
+import { onSnapshot, collection } from "firebase/firestore";
+
+import { db } from "../../firebase/config";
+
 
 import {
   Text,
@@ -16,29 +19,22 @@ import { Feather } from "@expo/vector-icons";
 
 const PostScreen = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
-  const [location, setLocation] = useState(null);
+
+  const getAllPost = async () => {
+    try {
+      onSnapshot(collection(db, "posts"), (data) => {
+        const posts = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        setPosts(posts);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-      const location = await Location.getCurrentPositionAsync({});
-      const coords = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      };
-      setLocation(coords);
-    })();
+    getAllPost();
   }, []);
 
-  useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [...prevState, route.params]);
-    }
-  }, [route.params]);
 
 
   return (
@@ -63,14 +59,21 @@ const PostScreen = ({ route, navigation }) => {
             <View style={{ flex: 1, flexDirection: "row" }}>
               <View style={styles.commentsCountWrapper}>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("Comments", { item })}
+                  onPress={() => navigation.navigate("Comments", { postID: item.id, photo: item.photo })}
                 >
                   <Feather name="message-circle" size={24} color="black" />
                 </TouchableOpacity>
                 <Text>0</Text>
               </View>
               <View style={styles.locationWrapper}>
-                <TouchableOpacity onPress={() => navigation.navigate("Map", { location, item })}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("Map", {
+                      location: item.location,
+                      title: item.formValues.title,
+                    })
+                  }
+                >
                   <Feather
                     name="map-pin"
                     size={18}
