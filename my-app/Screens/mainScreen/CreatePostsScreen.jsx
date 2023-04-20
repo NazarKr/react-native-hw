@@ -243,12 +243,12 @@ const CreatePostScreen = ({ navigation }) => {
                     Publish
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity
+                {photo && (<TouchableOpacity
                   style={styles.cleanBtnWrapper}
                   onPress={cleanPhoto}
                 >
                   <Feather name="trash-2" size={24} color="#DADADA" />
-                </TouchableOpacity>
+                </TouchableOpacity>)}
               </>
             )}
           </KeyboardAvoidingView>

@@ -1,15 +1,7 @@
 import React from "react";
 import {
   StyleSheet,
-  Text,
   View,
-  TextInput,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
-  ImageBackground,
-  Platform,
 } from "react-native";
 
 import { useDispatch } from "react-redux";
@@ -20,10 +12,6 @@ import { Feather, FontAwesome } from "@expo/vector-icons";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-// import useAuth from "../../../shared/hooks/useAuth";
-
-
-
 import PostScreen from "../PostsScreen";
 
 import CreatePostScreen from "../CreatePostsScreen";
@@ -33,7 +21,6 @@ import ProfileScreen from "../ProfileScreen";
 const MainTab = createBottomTabNavigator();
 
 const DefaultScreen = ({ navigation }) => {
-  // const { setIsAuth } = useAuth();
   const dispatch = useDispatch();
   const logOut = () => {
     dispatch(authLogOutUser())
@@ -72,26 +59,6 @@ const DefaultScreen = ({ navigation }) => {
                 />
               </View>
             ),
-            // headerLeft: () => (
-            //   <View style={styles.iconWrapper}>
-            //     <Feather
-            //       name="map"
-            //       size={24}
-            //       color="#BDBDBD"
-            //       onPress={() => {
-            //         navigation.navigate("Map");
-            //       }}
-            //     />
-            //     <FontAwesome
-            //       name="comments"
-            //       size={24}
-            //       color="#BDBDBD"
-            //       onPress={() => {
-            //         navigation.navigate("Comments");
-            //       }}
-            //     />
-            //   </View>
-            // ),
             tabBarItemStyle: { height: 40, borderRadius: 20 },
           }}
           name="Posts"
@@ -118,7 +85,7 @@ const DefaultScreen = ({ navigation }) => {
             ),
             tabBarActiveBackgroundColor: "#FF6C00",
             tabBarActiveTintColor: "#FFFFFF",
-            headerShown: true,
+            headerShown: false,
             headerTitleAlign: "center",
             tabBarItemStyle: { height: 40, borderRadius: 20 },
           }}

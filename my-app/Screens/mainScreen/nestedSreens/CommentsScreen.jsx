@@ -1,9 +1,13 @@
 import React from "react";
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+
+import { db } from "../../../firebase/config";
+import { collection, addDoc, onSnapshot, query } from "firebase/firestore";
 
 import { AntDesign } from "@expo/vector-icons";
+
+import formatDate from "../../../utils/formatDate";
 
 import {
   StyleSheet,
@@ -18,62 +22,50 @@ import {
   Platform,
   Image,
   FlatList,
+  SafeAreaView,
 } from "react-native";
 
-const CommentScreen = ({ route }) => {
-  useEffect(() => {
-    if (route.params) {
-      setPhoto(route.params.item.photo);
-    }
-  }, [route.params]);
-
-  const [photo, setPhoto] = useState(null);
+const CommentScreen = ({ route, navigation }) => {
   const [comment, setComment] = useState("");
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [commentsArr, setCommentsArr] = useState([]);
+  const [commentsCount, setCommentsCount] = useState(0);
 
-  const [commentsArr, setCommentsArr] = useState(null);
-
-  const clearAll = async () => {
-    try {
-      await AsyncStorage.clear();
-      setCommentsArr([]);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    const getItems = async () => {
-      try {
-        const data = await AsyncStorage.getItem("@items");
-        console.log("data in getItems", data);
-        const items = data !== null ? JSON.parse(data) : [];
-        console.log("items in getItems", items);
-        setCommentsArr([...items]);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getItems();
-  }, []);
-
-  const setItems = async () => {
-    try {
-      setCommentsArr((prevState) => [...prevState, comment]);
-      setComment("");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const { postID, photo } = route.params;
+  const { login } = useSelector((state) => state.auth);
 
   const keyboardHide = () => {
     Keyboard.dismiss();
     setIsShowKeyboard(false);
   };
 
+  const createComment = async () => {
+    const date = formatDate(new Date());
+    const commentsRef = collection(db, `posts/${postID}/comments`);
+    await addDoc(commentsRef, { comment, login, date });
+    setComment("");
+  };
+
+  const getAllComments = async () => {
+    const commentsQuery = query(collection(db, `posts/${postID}/comments`));
+    onSnapshot(commentsQuery, (data) => {
+      const commentsData = data.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setCommentsArr(commentsData);
+      setCommentsCount(commentsData.length);
+    });
+  };
+
   useEffect(() => {
-    AsyncStorage.setItem("@items", JSON.stringify(commentsArr));
-  }, [commentsArr]);
+    getAllComments();
+  }, []);
+
+  useEffect(() => {
+    console.log('commentsCount in comments', commentsCount);
+    navigation.setParams({ commentsCount: commentsCount });
+  }, [commentsCount]);
 
   return (
     <View style={styles.container}>
@@ -85,30 +77,31 @@ const CommentScreen = ({ route }) => {
           />
         </View>
       )}
-      <FlatList
-        data={commentsArr}
-        keyExtractor={(item, indx) => indx.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.commentWrapper}>
-            <Text style={styles.comments}>{item.comment}</Text>
-          </View>
-        )}
-      />
+      <SafeAreaView style={styles.SafeAreaView}>
+        <FlatList
+          data={commentsArr}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.commentWrapper}>
+              <Text style={styles.comments}>{item.comment}</Text>
+              <Text style={styles.commentDate}>{item.date}</Text>
+            </View>
+          )}
+        />
+      </SafeAreaView>
+
       <View style={styles.inputWrapper}>
         <TextInput
           placeholderTextColor="#BDBDBD"
           placeholder="Write a comment..."
-          onChangeText={(value) => setComment({ comment: value })}
+          onChangeText={(value) => setComment(value)}
           style={styles.input}
           value={comment}
           onBlur={keyboardHide}
           onFocus={() => setIsShowKeyboard(true)}
         />
-        <TouchableOpacity onPress={setItems} style={styles.btnWrap}>
+        <TouchableOpacity onPress={createComment} style={styles.btnWrap}>
           <AntDesign name="arrowup" size={24} color="#ffff" />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text onPress={clearAll}>Clear</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -167,5 +160,11 @@ const styles = StyleSheet.create({
     color: "#212121",
     fontSize: 13,
     lineHeight: 18,
+  },
+  commentDate: {
+    color: "#bdbdbd",
+    fontSize: 10,
+    lineHeight: 12,
+    textAlign: "right",
   },
 });
