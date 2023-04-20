@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import * as ImagePicker from "expo-image-picker";
+
 import {
   StyleSheet,
   Text,
@@ -15,7 +17,6 @@ import {
 import { authSignUpUser } from "../../redux/auth/authOperations";
 
 import { useDispatch } from "react-redux";
-
 
 import {
   loginValidation,
@@ -40,6 +41,8 @@ const RegistrationScreens = ({ navigation }) => {
 
   const [isSecureEntry, setIsSecureEntry] = useState(true);
 
+  const [userAvatar, setUserAvatar] = useState(null);
+
   const dispatch = useDispatch();
 
   function keyboardHide() {
@@ -47,26 +50,45 @@ const RegistrationScreens = ({ navigation }) => {
     Keyboard.dismiss();
   }
 
-  // function submitForm() {
-  //   if (
-  //     loginValidation(state) &&
-  //     passwordValidation(state) &&
-  //     emailValidation(state)
-  //   ) {
-  //     console.log(state);
-  //     dispatch(authSignIntUser(state))
-  //     setState(initialState);
-  //   } else return;
-  // }
-
-  const submitForm = () => {
-
-    console.log(state);
-    dispatch(authSignUpUser(state))
-    setState(initialState);
-
+  function submitForm() {
+    if (
+      loginValidation(state) &&
+      passwordValidation(state) &&
+      emailValidation(state)
+    ) {
+      console.log(state);
+      dispatch(authSignUpUser(state));
+      setState(initialState);
+    } else return;
   }
 
+  async function handleImageUpload() {
+    // запит на дозвіл на доступ до фото
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permissionResult.granted === false) {
+      alert("Permission to access camera roll is required!");
+      return;
+    }
+
+    // відкриття галереї для вибору фото
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      // завантаження обраного фото
+      const uri = result.assets[0].uri;
+      // додатковий код для завантаження фото
+      setUserAvatar(uri);
+    }
+  }
+
+  function removeUserAvatarFromRegisterScreen() {
+    setUserAvatar(null);
+  }
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
@@ -75,13 +97,36 @@ const RegistrationScreens = ({ navigation }) => {
           style={styles.image}
           source={require("../../assets/images/photo-bg2x.jpg")}
         >
-          <View style={styles.imageWrapper}>
-            <Image source={require("../../assets/images/frame.png")} />
-            <Image
-              style={styles.addIcon}
-              source={require("../../assets/add.png")}
-            />
-          </View>
+          {!userAvatar ? (
+            <View style={styles.imageWrapper}>
+              <Image source={require("../../assets/images/frame.png")} />
+              <TouchableOpacity
+                style={styles.addAvatarBtn}
+                onPress={handleImageUpload}
+              >
+                <Image
+                  style={styles.addIcon}
+                  source={require("../../assets/add.png")}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.imageWrapper}>
+              <Image
+                source={{ uri: userAvatar }}
+                style={{ width: "100%", height: "100%" }}
+              />
+              <TouchableOpacity
+                style={styles.RmAddAvatarBtn}
+                onPress={removeUserAvatarFromRegisterScreen}
+              >
+                <Image
+                  style={styles.addIcon}
+                  source={require("../../assets/remove.png")}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
 
           <View style={styles.wrapperForm}>
             <View style={styles.form}>
@@ -277,13 +322,27 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F6F6",
     borderRadius: 16,
   },
-  addIcon: {
+
+  addAvatarBtn: {
     position: "absolute",
     left: "90%",
     top: "65%",
+  },
+
+  addIcon: {
     width: 25,
     height: 25,
   },
+
+  RmAddAvatarBtn: {
+    position: "absolute",
+    top: "50%",
+    left: "90%",
+    color: "#E8E8E8",
+    fontSize: 16,
+    lineHeight: 19,
+  },
+
   textPassword: {
     position: "absolute",
     top: "50%",

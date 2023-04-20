@@ -1,16 +1,4 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
-  ImageBackground,
-  Platform,
-} from "react-native";
 
 import DefaultScreen from "./nestedSreens/DefaultScreen";
 
